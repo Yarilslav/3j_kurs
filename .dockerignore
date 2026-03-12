@@ -1,0 +1,14 @@
+# Docker build context hygiene
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+.git/
+.gitignore
+README.md

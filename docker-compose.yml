@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  app:
+    # Build the FastAPI app from the local Dockerfile.
+    build: .
+    # Expose the app on localhost:8000.
+    ports:
+      - "8000:8000"
+    # Mount source code for live reload inside the container.
+    volumes:
+      - ./src:/app/src
+    # Keep the dev server in reload mode.
+    command: >
+      poetry run uvicorn praktychni_3j_kurs.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    # Ensure the API starts after the database container.
+    depends_on:
+      - db
+
+  db:
+    # PostgreSQL database for local development.
+    image: postgres:16
+    # Default credentials for local usage; change in real deployments.
+    environment:
+      POSTGRES_DB: praktychni
+      POSTGRES_USER: praktychni
+      POSTGRES_PASSWORD: praktychni
+    # Persist database data on the host via a named volume.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Expose Postgres on localhost for GUI tools if needed.
+    ports:
+      - "5432:5432"
+
+volumes:
+  # Named volume for PostgreSQL data persistence.
+  postgres_data:
