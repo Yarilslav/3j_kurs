@@ -1,17 +1,51 @@
-"""Project template placeholder.
+"""FastAPI application entry point.
 
-This file intentionally contains only a large "template" label for now.
-It will be replaced with the real application code later.
+This module defines the ASGI app object and a simple runner for development.
 """
+
+from __future__ import annotations
+
+# FastAPI provides the web framework and routing primitives.
+from fastapi import FastAPI
+
+# Uvicorn is the ASGI server used to run the app locally.
+import uvicorn
+
+# Create the application instance with minimal metadata.
+# These values show up in the automatic docs at /docs.
+app = FastAPI(
+    title="Praktychni 3j Kurs API",
+    version="0.1.0",
+    description="Basic FastAPI setup for course practicals.",
+)
+
+
+@app.get("/", tags=["health"])
+def health_check() -> dict[str, str]:
+    """Simple health endpoint.
+
+    Keeping this small makes it easy to verify the server is alive.
+    """
+
+    # A predictable response is handy for tests and manual checks.
+    return {"status": "ok"}
 
 
 def main() -> None:
-    """Print the placeholder template label."""
+    """Run the development server.
 
-    # Keep the output loud and simple to confirm the file is executed.
-    print("ШАБЛОН")
+    We use `reload=True` so code changes are picked up automatically.
+    """
+
+    # Point Uvicorn at the import path so reload works reliably.
+    uvicorn.run(
+        "praktychni_3j_kurs.main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+    )
 
 
-# Allow `python -m praktychni_3j_kurs.main` for quick checks.
+# Allow `python -m praktychni_3j_kurs.main` in addition to `poetry run`.
 if __name__ == "__main__":
     main()
