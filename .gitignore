@@ -1,0 +1,30 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Poetry
+poetry.lock
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs and editors
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
