@@ -1,8 +1,0 @@
-docker compose up -d --build - збирає образи та запускає сервіси у фоні
-docker compose up --build - збирає та запускає сервіси у поточній сесії
-docker compose down - зупиняє і прибирає контейнери та мережі
-docker compose logs -f app - показує логи сервісу app у реальному часі
-docker build -t praktychni-3j-kurs . - збирає Docker-образ з Dockerfile
-docker run --rm -p 8000:8000 -v ${PWD}/src:/app/src praktychni-3j-kurs - запускає контейнер з hot-reload
-docker ps - показує запущені контейнери
-poetry show - показує встановлені залежності у проекті
