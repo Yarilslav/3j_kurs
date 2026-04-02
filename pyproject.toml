@@ -1,35 +1,30 @@
-# Poetry project configuration
-# This file is intentionally commented to make each section clear for new contributors.
-
 [tool.poetry]
-# Distribution name shown on package indexes (can use hyphens).
 name = "praktychni-3j-kurs"
-# Initial version for a new project.
 version = "0.1.0"
-# Short description used by package metadata.
-description = "Course practicals for 3rd year"
-# Author metadata; update email/name if needed.
-authors = ["acer3 <acer3@example.com>"]
-# README displayed on package index pages.
+description = "___"
 readme = "README.md"
-# Use a src/ layout to avoid import shadowing during development.
-packages = [{ include = "praktychni_3j_kurs", from = "src" }]
+packages = [{ include = "app" }]
 
 [tool.poetry.dependencies]
-# Minimum supported Python version for this project.
+# Потрібні версії:
 python = "^3.11"
 fastapi = "^0.135.1"
 uvicorn = "^0.41.0"
+sqlalchemy = "^2.0.48"
+psycopg = {extras = ["binary"], version = "^3.3.3"}
+alembic = "^1.18.4"
+pydantic-settings = "^2.13.1"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+bcrypt = "4.1.3"
+pyjwt = "^2.12.1"
 
 [tool.poetry.group.dev.dependencies]
-# Basic test runner for local checks.
 pytest = "^8.3.0"
+#для локальної перевірки
 
 [tool.poetry.scripts]
-# CLI entry point; allows running `poetry run praktychni-3j-kurs`.
-praktychni-3j-kurs = "praktychni_3j_kurs.main:main"
+praktychni-3j-kurs = "app.main:main"
 
 [build-system]
-# Poetry uses poetry-core for building packages.
 requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
