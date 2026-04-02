@@ -1,15 +1,10 @@
-"""Post model for PostgreSQL."""
-
 from __future__ import annotations
-
 from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.db.base import Base
 
 
 class Post(Base):
-    """Posts table (many posts per user)."""
 
     __tablename__ = "posts"
 

@@ -1,15 +1,10 @@
-"""Category model for PostgreSQL."""
-
 from __future__ import annotations
-
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.db.base import Base
 
 
 class Category(Base):
-    """Categories table (one-to-many with products)."""
 
     __tablename__ = "categories"
 

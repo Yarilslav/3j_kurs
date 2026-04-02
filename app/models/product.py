@@ -1,15 +1,10 @@
-"""Product model for PostgreSQL."""
-
 from __future__ import annotations
-
 from sqlalchemy import ForeignKey, Float, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.db.base import Base
 
 
 class Product(Base):
-    """Products table (many products per category)."""
 
     __tablename__ = "products"
 
