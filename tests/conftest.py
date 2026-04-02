@@ -1,0 +1,3 @@
+"""Pytest fixtures (placeholder)."""
+
+#Шаблон

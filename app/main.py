@@ -8,6 +8,8 @@ from __future__ import annotations
 # FastAPI provides the web framework and routing primitives.
 from fastapi import FastAPI
 
+from app.api.v1.endpoints import auth, posts, products, users
+
 # Uvicorn is the ASGI server used to run the app locally.
 import uvicorn
 
@@ -18,6 +20,12 @@ app = FastAPI(
     version="0.1.0",
     description="Basic FastAPI setup for course practicals.",
 )
+
+# Register the users router directly.
+app.include_router(users.router)
+app.include_router(products.router)
+app.include_router(auth.router)
+app.include_router(posts.router)
 
 
 @app.get("/", tags=["health"])
@@ -39,7 +47,7 @@ def main() -> None:
 
     # Point Uvicorn at the import path so reload works reliably.
     uvicorn.run(
-        "praktychni_3j_kurs.main:app",
+        "app.main:app",
         host="127.0.0.1",
         port=8000,
         reload=True,
