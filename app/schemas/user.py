@@ -1,7 +1,4 @@
-"""User schemas for request/response validation."""
-
 from __future__ import annotations
-
 from pydantic import BaseModel, Field
 
 
@@ -26,6 +23,4 @@ class UserResponse(UserBase):
     """Schema for user responses."""
 
     id: int
-
-    # Allow reading from ORM objects.
     model_config = {"from_attributes": True}
