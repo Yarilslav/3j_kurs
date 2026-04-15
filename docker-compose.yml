@@ -12,7 +12,8 @@ services:
     command: >
       python run.py
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   alembic:
     build: .
@@ -23,7 +24,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     command: >
       alembic upgrade head
 
@@ -31,13 +33,47 @@ services:
     # Постгрес БД:
     image: postgres:16
     environment:
-      POSTGRES_DB: praktychni
-      POSTGRES_USER: praktychni
-      POSTGRES_PASSWORD: praktychni
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: Europe/Kyiv
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  db_test:
+    profiles: ["test"]
+    image: postgres:16
+    environment:
+      TZ: Europe/Kyiv
+    env_file:
+      - .env.test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  tests:
+    profiles: ["test"]
+    build: .
+    volumes:
+      - ./:/app
+    environment:
+      PYTHONPATH: /app
+    env_file:
+      - .env.test
+    depends_on:
+      db_test:
+        condition: service_healthy
+    command: >
+      pytest -q
 
 volumes:
   postgres_data:

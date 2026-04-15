@@ -1,7 +1,9 @@
 from __future__ import annotations
-from fastapi import FastAPI
-from app.api.v1.endpoints import auth, posts, products, users
+
 import uvicorn
+from fastapi import FastAPI
+
+from app.api.v1.router import api_router
 
 app = FastAPI(
     title="Praktychni 3j Kurs API",
@@ -9,10 +11,7 @@ app = FastAPI(
     description="Basic FastAPI setup for course practicals.",
 )
 
-app.include_router(users.router)
-app.include_router(products.router)
-app.include_router(auth.router)
-app.include_router(posts.router)
+app.include_router(api_router)
 
 
 @app.get("/", tags=["health"])

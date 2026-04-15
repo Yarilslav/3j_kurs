@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     #Централізоване управління апішкою
 
     DATABASE_URL: str
+    POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     SECRET_KEY: str

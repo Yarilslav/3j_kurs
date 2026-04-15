@@ -1,0 +1,10 @@
+$kind: collection
+name: Praktychni 3j Kurs API
+description: |-
+  CRUD колекція для FastAPI проекту praktychni-3j-kurs.
+  Містить ендпоінти для: Auth, Users, Products, Posts, Health.
+variables:
+  - key: base_url
+    value: 'http://127.0.0.1:8000'
+  - key: token
+    value: ''

@@ -7,7 +7,6 @@ from app.crud import crud_user
 from app.db.session import get_db
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
 
-# Router with /users prefix for clarity.
 router = APIRouter(prefix="/users", tags=["users"])
 
 
