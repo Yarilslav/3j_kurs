@@ -6,3 +6,11 @@ docker build -t praktychni-3j-kurs . - збирає Docker-образ з Dockerf
 docker run --rm -p 8000:8000 -v ${PWD}/src:/app/src praktychni-3j-kurs - запускає контейнер з hot-reload
 docker ps - показує запущені контейнери
 poetry show - показує встановлені залежності у проекті
+
+http://127.0.0.1:9090/query -UI Прометеуса
+http://127.0.0.1:8000/metrcs - метрики API
+http://127.0.0.1:3000 - Grafana
+
+Логін Grafana:
+user: admin
+password: admin

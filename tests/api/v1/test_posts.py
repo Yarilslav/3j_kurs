@@ -14,7 +14,7 @@ def test_create_post_requires_authentication(client):
 def test_create_post_creates_post_for_logged_in_user(client, created_user):
     client.post(
         "/login",
-        json={"login": created_user.email, "password": "secret123"},
+        json={"login": created_user.login, "password": "123456"},
     )
 
     response = client.post(

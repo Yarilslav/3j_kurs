@@ -13,9 +13,10 @@ from app.db.base import Base
 from app.main import app
 from app.models.category import Category
 from app.models.product import Product
-from app.models.user import User
+from app.models.user import User, UserRole
 
 settings.SECRET_KEY = "test-secret-key-with-at-least-32-bytes"
+settings.ADMIN_BOOTSTRAP_ENABLED = False
 
 
 def get_test_database_url() -> str:
@@ -61,7 +62,25 @@ async def created_user(db_session: AsyncSession) -> User:
     user = User(
         name="Test User",
         email="user@example.com",
+        login="test-user",
+        phone_number="+380501112233",
         hashed_password=hash_password("123456"),
+        role=UserRole.USER,
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
+
+
+@pytest_asyncio.fixture
+async def admin_user(db_session: AsyncSession) -> User:
+    user = User(
+        name="Admin User",
+        email="admin@example.com",
+        login="admin-user",
+        hashed_password=hash_password("123456"),
+        role=UserRole.ADMIN,
     )
     db_session.add(user)
     await db_session.commit()
