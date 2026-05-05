@@ -22,6 +22,9 @@ htmlcov/
 
 .idea/
 .vscode/
+frontend/node_modules/
+frontend/dist/
+docs/wireframes/*.pdf
 
 .DS_Store
 Thumbs.db

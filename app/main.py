@@ -4,9 +4,11 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.bootstrap import ensure_root_admin
+from app.core.config import settings
 from app.core.metrics import setup_metrics
 from app.db.session import AsyncSessionLocal
 
@@ -23,6 +25,14 @@ app = FastAPI(
     version="0.1.0",
     description="Basic FastAPI setup for course practicals.",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in settings.FRONTEND_CORS_ORIGINS.split(",") if origin.strip()],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 setup_metrics(app)

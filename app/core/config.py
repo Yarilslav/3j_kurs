@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     ADMIN_LOGIN: str = "asahiadm"
     ADMIN_PASSWORD: str = "654321asahi"
     ADMIN_PHONE_NUMBER: str | None = None
+    FRONTEND_CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
