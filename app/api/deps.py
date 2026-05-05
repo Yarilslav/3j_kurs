@@ -38,6 +38,27 @@ async def get_current_user(
     return user
 
 
+async def get_optional_current_user(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+
+    token = request.cookies.get("access_token") or _extract_bearer_token(request)
+    if not token:
+        return None
+    try:
+        payload = decode_access_token(token)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    user = await crud_user.get_user_by_id(db, int(user_id))
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    return user
+
+
 def require_roles(*allowed_roles: UserRole):
     async def role_dependency(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in allowed_roles:
@@ -51,4 +72,10 @@ def require_roles(*allowed_roles: UserRole):
 
 
 async def get_admin_user(current_user: User = Depends(require_roles(UserRole.ADMIN))) -> User:
+    return current_user
+
+
+async def get_staff_or_admin_user(
+    current_user: User = Depends(require_roles(UserRole.STAFF, UserRole.ADMIN)),
+) -> User:
     return current_user

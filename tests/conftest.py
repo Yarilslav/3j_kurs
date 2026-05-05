@@ -89,17 +89,36 @@ async def admin_user(db_session: AsyncSession) -> User:
 
 
 @pytest_asyncio.fixture
+async def staff_user(db_session: AsyncSession) -> User:
+    user = User(
+        name="Staff User",
+        email="staff@example.com",
+        login="staff-user",
+        hashed_password=hash_password("123456"),
+        role=UserRole.STAFF,
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
+
+
+@pytest_asyncio.fixture
 async def seeded_product(db_session: AsyncSession) -> Product:
-    category = Category(name="Forest mosses")
+    category = Category(name="Chinese")
     db_session.add(category)
     await db_session.flush()
 
     product = Product(
-        name="Sphagnum",
-        description="Test moss",
-        image_path="/images/sphagnum.jpg",
-        steepness_index=1.5,
-        category_id=category.id,
+        name="Tie Guan Yin",
+        native_name="铁观音",
+        description="Test tea",
+        image_filename="Sphagnum.jpg",
+        kind="oolong",
+        price_uah=320,
+        stock_quantity=12,
+        reviews="Nice tea",
+        categories=[category],
     )
     db_session.add(product)
     await db_session.commit()

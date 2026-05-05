@@ -114,6 +114,6 @@ async def test_ensure_root_admin_upgrades_existing_account(db_session):
 
     admin = await crud_user.get_user_by_id(db_session, existing_user.id)
     assert admin is not None
-    assert admin.login == "string"
+    assert admin.login == settings.ADMIN_LOGIN
     assert admin.role == UserRole.ADMIN
     assert admin.purchase_history is None

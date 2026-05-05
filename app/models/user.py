@@ -9,8 +9,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.order import Order
     from app.models.post import Post
     from app.models.profile import Profile
+    from app.models.reservation import Reservation
 
 
 class UserRole(StrEnum):
@@ -47,3 +49,5 @@ class User(Base):
 
     posts: Mapped[list["Post"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     profile: Mapped[Optional["Profile"]] = relationship(back_populates="user", uselist=False)
+    orders: Mapped[list["Order"]] = relationship(back_populates="user")
+    reservations: Mapped[list["Reservation"]] = relationship(back_populates="user")
