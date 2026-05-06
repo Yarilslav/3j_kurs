@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#faf7f1"/>
+  <rect x="40" y="30" width="1120" height="70" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="70" y="73" font-family="Arial" font-size="28">NavBar: Home | Auth | Catalog | Booking | Admin</text>
+  <rect x="40" y="130" width="690" height="260" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="70" y="180" font-family="Arial" font-size="34">Hero block</text>
+  <text x="70" y="225" font-family="Arial" font-size="20">Tea House Asahi intro text</text>
+  <rect x="70" y="275" width="170" height="50" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="97" y="308" font-family="Arial" font-size="20">Open catalog</text>
+  <rect x="260" y="275" width="170" height="50" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="300" y="308" font-family="Arial" font-size="20">Booking</text>
+  <rect x="760" y="130" width="400" height="260" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="790" y="180" font-family="Arial" font-size="28">Project intent</text>
+  <rect x="40" y="430" width="1120" height="300" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="70" y="480" font-family="Arial" font-size="30">Scenario map</text>
+  <rect x="80" y="520" width="460" height="160" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="110" y="565" font-family="Arial" font-size="24">Booking flow card</text>
+  <rect x="640" y="520" width="460" height="160" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="670" y="565" font-family="Arial" font-size="24">Order flow card</text>
+</svg>

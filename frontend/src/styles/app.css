@@ -1,0 +1,281 @@
+:root {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: #201711;
+  background:
+    linear-gradient(180deg, rgba(219, 198, 169, 0.18), transparent 35%),
+    linear-gradient(135deg, #f6efe7 0%, #f0e2cf 52%, #e8dcc9 100%);
+  line-height: 1.45;
+  font-weight: 400;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 2px solid #3f3028;
+  background: #fffaf4;
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.page-shell {
+  min-height: 100vh;
+}
+
+.content-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.nav-shell {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 3px solid #2f241e;
+  background: rgba(255, 249, 241, 0.88);
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(10px);
+}
+
+.brand-mark {
+  display: grid;
+}
+
+.brand-mark__eyebrow,
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  color: #735748;
+}
+
+.nav-links,
+.button-row,
+.auth-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.nav-link,
+.button {
+  border: 2px solid #2f241e;
+  background: #fff7ed;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+}
+
+.nav-link--active,
+.button--primary {
+  background: #2f241e;
+  color: #fef9f2;
+}
+
+.button--danger {
+  background: #7e3427;
+  color: #fff7f5;
+}
+
+.stack-large {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.stack-medium {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-grid,
+.two-column {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.two-column--wide {
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+}
+
+.panel {
+  border: 3px solid #2f241e;
+  border-radius: 24px;
+  padding: 1.25rem;
+  background: rgba(255, 251, 245, 0.92);
+  box-shadow: 10px 10px 0 rgba(47, 36, 30, 0.08);
+}
+
+.panel--hero {
+  min-height: 280px;
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.page-header h1,
+.panel h2,
+.panel h3 {
+  margin: 0 0 0.35rem;
+}
+
+.page-header p,
+.panel p {
+  margin: 0;
+}
+
+.plain-list,
+.scenario-card ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.scenario-grid,
+.catalog-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.scenario-card,
+.product-card,
+.seat-box,
+.admin-product-row {
+  border: 2px dashed #7b6356;
+  border-radius: 18px;
+  padding: 1rem;
+  background: #fffdf8;
+}
+
+.product-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.product-card__meta {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+}
+
+.toolbar__search {
+  flex: 1 1 280px;
+}
+
+.toolbar__meta {
+  text-align: right;
+  display: grid;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.data-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.data-list div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.data-list dt {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #735748;
+}
+
+.data-list dd {
+  margin: 0;
+}
+
+.status-box {
+  border-radius: 18px;
+  padding: 0.9rem 1rem;
+  border: 2px solid #2f241e;
+  background: #f4eee7;
+}
+
+.status-box p {
+  margin-top: 0.4rem;
+}
+
+.status-box--success {
+  background: #edf6e9;
+}
+
+.status-box--warning {
+  background: #fff0e1;
+}
+
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.seat-box {
+  text-align: center;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.admin-product-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .content-shell {
+    padding: 1rem 0.8rem 2rem;
+  }
+
+  .seat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

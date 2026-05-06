@@ -10,8 +10,6 @@ ENV/
 .env
 
 
-poetry.lock
-
 build/
 dist/
 *.egg-info/

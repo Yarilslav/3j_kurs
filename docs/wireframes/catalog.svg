@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#faf7f1"/>
+  <rect x="40" y="30" width="1120" height="70" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="70" y="73" font-family="Arial" font-size="28">NavBar</text>
+  <text x="60" y="150" font-family="Arial" font-size="34">Catalog</text>
+  <rect x="60" y="190" width="840" height="70" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="90" y="235" font-family="Arial" font-size="24">Search / filter bar</text>
+  <rect x="930" y="190" width="230" height="70" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="970" y="235" font-family="Arial" font-size="24">Count</text>
+  <rect x="60" y="300" width="320" height="210" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="440" y="300" width="320" height="210" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="820" y="300" width="320" height="210" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="95" y="350" font-family="Arial" font-size="24">Product card</text>
+  <text x="475" y="350" font-family="Arial" font-size="24">Product card</text>
+  <text x="855" y="350" font-family="Arial" font-size="24">Product card</text>
+  <rect x="60" y="540" width="320" height="210" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="440" y="540" width="320" height="210" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="820" y="540" width="320" height="210" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="8 6"/>
+</svg>

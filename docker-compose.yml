@@ -16,6 +16,7 @@ services:
         condition: service_completed_successfully
     environment:
       PYTHONPATH: /app
+      APP_RELOAD: "true"
       FRONTEND_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
 
   frontend:
@@ -82,7 +83,10 @@ services:
 
   tests:
     profiles: ["test"]
-    build: .
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "true"
     volumes:
       - ./:/app
     environment:

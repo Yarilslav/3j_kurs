@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#faf7f1"/>
+  <rect x="40" y="30" width="1120" height="70" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="70" y="73" font-family="Arial" font-size="28">NavBar</text>
+  <text x="60" y="150" font-family="Arial" font-size="34">Product detail + order</text>
+  <rect x="60" y="190" width="510" height="540" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="90" y="240" font-family="Arial" font-size="28">Product information</text>
+  <rect x="630" y="190" width="530" height="540" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="660" y="240" font-family="Arial" font-size="28">Order form</text>
+  <rect x="670" y="290" width="450" height="50" fill="none" stroke="#222" stroke-width="2"/>
+  <rect x="670" y="370" width="450" height="50" fill="none" stroke="#222" stroke-width="2"/>
+  <rect x="670" y="450" width="450" height="50" fill="none" stroke="#222" stroke-width="2"/>
+  <rect x="670" y="530" width="450" height="50" fill="none" stroke="#222" stroke-width="2"/>
+  <rect x="670" y="620" width="190" height="55" fill="none" stroke="#222" stroke-width="3"/>
+  <text x="720" y="655" font-family="Arial" font-size="22">Submit</text>
+</svg>

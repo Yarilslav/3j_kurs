@@ -1,140 +1,131 @@
-# Tea House “Asahi” Web Application (茶屋朝日)
+# Tea House "Asahi" Web Application
 
-## Опис проєкту
-Веб-додаток для чайного дому “Асахі”, який дозволяє:
-- переглядати каталог товарів;
-- оформлювати замовлення;
-- бронювати місця.
+## Опис проекту
 
-Система також надає базові інструменти для керування товарами, замовленнями та бронюваннями.
-
----
+Веб-додаток для чайного дому "Асахі", який дозволяє переглядати каталог товарів, оформлювати замовлення та бронювати місця. Система також має базові інструменти для керування товарами, замовленнями та бронюваннями.
 
 ## Архітектура
-Проєкт побудований як клієнт-серверна система:
+
 - Backend: FastAPI
 - Database: PostgreSQL
-- Frontend: React (low-fi прототип, Vite)
-- Контейнеризація: Docker Compose
+- Frontend: React + Vite
+- Migrations: Alembic
+- Контейнеризація: Docker / Docker Compose
+- Monitoring: Prometheus + Grafana
 
----
-## Запуск проєкту
+## Локальний запуск
+
+1. Створіть локальний env-файл:
+
+```bash
+cp .env.example .env
+```
+
+2. Для навчального локального запуску можна використати значення з прикладу, але секрети у `.env` мають бути змінені перед production-деплойментом.
+
+3. Запустіть проект:
 
 ```bash
 docker compose up --build
-Доступ до сервісів
-Backend
-API: 
-http://127.0.0.1:8000
-Swagger (OpenAPI): 
-http://127.0.0.1:8000/docs
-Metrics: 
-http://127.0.0.1:8000/metrics
-Frontend
-React frontend: 
-http://127.0.0.1:5173
-Monitoring
-Prometheus: 
-http://127.0.0.1:9090
-Grafana: 
-http://127.0.0.1:3000
+```
 
+Доступ до сервісів:
 
-## Основні API endpoint-и:
-Auth
-POST /register
-POST /login
-GET /me
-Users
-GET /users/
-POST /users/
-PUT /users/{user_id}
-DELETE /users/{user_id}
-PATCH /users/by-login/{login}/role
-Products
-GET /products/
-GET /products/{id}
-POST /products/
-PUT /products/{id}
-DELETE /products/{id}
-Orders
-POST /orders/
-GET /orders/
-PATCH /orders/{order_id}/status
-Reservations
-POST /reservations/
-GET /reservations/
-PATCH /reservations/{reservation_id}/status
+- Backend Swagger: http://127.0.0.1:8000/docs
+- Health check: http://127.0.0.1:8000/healthz
+- Readiness check: http://127.0.0.1:8000/readyz
+- Metrics: http://127.0.0.1:8000/metrics
+- Frontend: http://127.0.0.1:5173
+- Prometheus: http://127.0.0.1:9090
+- Grafana: http://127.0.0.1:3000
 
-## Приклади запитів:
+## Тести
 
-Реєстрація користувача
-POST /register
-{
-  "name": "Asahi Guest",
-  "email": "guest@example.com",
-  "login": "asahiguest",
-  "phone_number": "+380501234567",
-  "password": "123456"
-}
+```bash
+docker compose --profile test up --build --abort-on-container-exit tests
+```
 
-Отримання списку товарів
-GET /products/
+## Підготовка до AWS
 
-Створення замовлення
-POST /orders/
-{
-  "items": [
-    {
-      "product_id": 1,
-      "quantity": 2
-    }
-  ],
-  "address": "Kyiv, Example street 1",
-  "guest_name": "Asahi Guest",
-  "guest_contact": "guest@example.com"
-}
+Рекомендований навчальний шлях деплойменту:
 
-Створення бронювання
-POST /reservations/
-{
-  "reservation_at": "2026-05-10 18:00",
-  "places": [1, 2],
-  "guest_name": "Asahi Guest",
-  "guest_contact": "guest@example.com"
-}
+- Backend: Docker image у Amazon ECR, запуск через ECS Fargate, Elastic Beanstalk Docker або App Runner.
+- Database: Amazon RDS PostgreSQL.
+- Frontend: окремо через S3 + CloudFront або AWS Amplify.
+- Секрети: AWS Secrets Manager, Parameter Store або environment variables сервісу деплойменту.
+- Health check для load balancer: `/healthz`.
+- Readiness check з перевіркою БД: `/readyz`.
 
+Мінімальні production-змінні:
+
+```env
+ENVIRONMENT=production
+APP_HOST=0.0.0.0
+APP_PORT=8000
+APP_RELOAD=false
+DATABASE_URL=postgresql+psycopg_async://USER:PASSWORD@RDS_HOST:5432/DB_NAME
+POSTGRES_DB=DB_NAME
+POSTGRES_USER=USER
+POSTGRES_PASSWORD=PASSWORD
+SECRET_KEY=generate-a-random-32-plus-character-secret
+FRONTEND_CORS_ORIGINS=https://your-frontend-domain.example
+ADMIN_BOOTSTRAP_ENABLED=false
+RUN_MIGRATIONS=false
+```
+
+Для першого деплойменту можна виконати міграції окремою ECS task або тимчасово встановити:
+
+```env
+RUN_MIGRATIONS=true
+```
+
+Не залишайте `RUN_MIGRATIONS=true` як постійну поведінку для кількох одночасних інстансів.
+
+## Production smoke test локально
+
+Скопіюйте `.env.example` у `.env`, змініть `SECRET_KEY`, `POSTGRES_PASSWORD`, `ADMIN_PASSWORD`, після чого:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+
+Якщо `ENVIRONMENT=production`, застосунок не стартує з дефолтним `SECRET_KEY` або дефолтним `ADMIN_PASSWORD`.
+
+## Основні API endpoint-и
+
+- Auth: `POST /register`, `POST /login`, `GET /me`
+- Users: `GET /users/`, `POST /users/`, `PUT /users/{user_id}`, `DELETE /users/{user_id}`, `PATCH /users/by-login/{login}/role`
+- Products: `GET /products/`, `GET /products/{id}`, `POST /products/`, `PUT /products/{id}`, `DELETE /products/{id}`
+- Orders: `POST /orders/`, `GET /orders/`, `PATCH /orders/{order_id}/status`
+- Reservations: `POST /reservations/`, `GET /reservations/`, `PATCH /reservations/{reservation_id}/status`
 
 ## Frontend
 
 Frontend реалізовано як low-fi прототип на React + Vite.
 
-Основні маршрути frontend
-/ — головна сторінка;
-/auth — сторінка входу та реєстрації;
-/catalog — каталог товарів;
-/catalog/:id — сторінка окремого товару;
-/booking — сторінка бронювання;
-/admin — демонстраційна admin-панель.
-Призначення frontend
-демонстрація структури інтерфейсу;
-навігація між сторінками;
-відображення основних користувацьких сценаріїв;
-базова інтеграція з backend API.
+Маршрути frontend:
 
+- `/` - головна сторінка
+- `/auth` - сторінка входу та реєстрації
+- `/catalog` - каталог товарів
+- `/catalog/:id` - сторінка окремого товару
+- `/booking` - сторінка бронювання
+- `/admin` - демонстраційна admin-панель
+
+Для деплойменту frontend на S3/CloudFront або Amplify встановіть:
+
+```env
+VITE_API_BASE_URL=https://your-api-domain.example
+```
+
+і зберіть статичні файли:
+
+```bash
+cd frontend
+npm ci
+npm run build
+```
 
 ## Додаткові матеріали
-У папці docs/ знаходяться:
-User Flow;
-Flow Diagram;
-low-fi Wireframes сторінок.
 
-
-Технології
-FastAPI
-PostgreSQL
-React
-Vite
-Docker / Docker Compose
-Prometheus
-Grafana
+У папці `docs/` знаходяться user flow, flow diagram та low-fi wireframes сторінок.

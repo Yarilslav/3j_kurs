@@ -10,4 +10,10 @@ htmlcov/
 .vscode/
 .git/
 .gitignore
+.env
+.env.*
+!.env.example
+frontend/node_modules/
+frontend/dist/
+Praktychni/
 README.md
