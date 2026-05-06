@@ -1,8 +1,9 @@
 #!/bin/sh
 set -e
 
-if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
+if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+  echo "Running migrations..."
   alembic upgrade head
 fi
 
-exec "$@"
+exec python run.py
