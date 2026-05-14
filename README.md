@@ -112,9 +112,10 @@ Frontend реалізовано як low-fi прототип на React + Vite.
 - `/booking` - сторінка бронювання
 - `/admin` - демонстраційна admin-панель
 
-Для деплойменту frontend на S3/CloudFront або Amplify встановіть:
+Для деплойменту frontend на S3/CloudFront, Amplify або Render встановіть:
 
 ```env
+VITE_API_URL=https://your-api-domain.example
 VITE_API_BASE_URL=https://your-api-domain.example
 ```
 
@@ -125,6 +126,22 @@ cd frontend
 npm ci
 npm run build
 ```
+
+## Render
+
+Для фронтенду в репозиторії є готовий [render.yaml](C:/Users/acer3/PycharmProjects/praktychni_3j_kurs/render.yaml) під `Static Site`.
+
+У ньому вже виставлено:
+
+```env
+VITE_API_URL=https://threej-kurs.onrender.com
+```
+
+і додано rewrite `/* -> /index.html`, щоб React Router коректно працював на прямих переходах на `/catalog`, `/booking`, `/admin` та інші маршрути.
+
+Для backend на Render тепер підтримується звичайний `DATABASE_URL=postgresql://...` або `postgresql+psycopg://...`: конфіг автоматично нормалізує його для async SQLAlchemy.
+
+Monitoring-контейнери у Render можна піднімати окремо пізніше, але для поточного деплойменту вони не потрібні, тому `render.yaml` спрощено саме під фронтенд.
 
 ## Додаткові матеріали
 

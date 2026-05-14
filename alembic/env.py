@@ -43,7 +43,6 @@ def run_migrations_online() -> None:
     connectable = create_engine(
         str(url),
         poolclass=pool.NullPool,
-        connect_args={"password": settings.POSTGRES_PASSWORD},
     )
 
     with connectable.connect() as connection:

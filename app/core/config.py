@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+from sqlalchemy.engine import make_url
+
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -12,9 +15,9 @@ class Settings(BaseSettings):
     PORT: int | None = None
     APP_RELOAD: bool = False
     DATABASE_URL: str
-    POSTGRES_DB: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str | None = None
+    POSTGRES_USER: str | None = None
+    POSTGRES_PASSWORD: str | None = None
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
@@ -33,6 +36,22 @@ class Settings(BaseSettings):
     @property
     def app_port(self) -> int:
         return self.PORT or self.APP_PORT
+
+    @model_validator(mode="after")
+    def normalize_database_settings(self) -> "Settings":
+        database_url = self.DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        url = make_url(database_url)
+
+        if url.drivername == "postgresql":
+            url = url.set(drivername="postgresql+psycopg_async")
+        elif url.drivername in {"postgresql+psycopg", "postgresql+psycopg2"}:
+            url = url.set(drivername="postgresql+psycopg_async")
+
+        self.DATABASE_URL = str(url)
+        self.POSTGRES_DB = self.POSTGRES_DB or url.database
+        self.POSTGRES_USER = self.POSTGRES_USER or url.username
+        self.POSTGRES_PASSWORD = self.POSTGRES_PASSWORD or url.password
+        return self
 
     @model_validator(mode="after")
     def validate_production_settings(self) -> "Settings":
