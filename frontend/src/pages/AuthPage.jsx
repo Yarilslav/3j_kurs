@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 import { fetchMe, loginUser, registerUser } from "../api/auth";
 import StatusBox from "../components/StatusBox";
@@ -17,23 +18,28 @@ const initialLogin = {
 };
 
 export default function AuthPage() {
+  const { currentUser, refreshCurrentUser } = useOutletContext();
   const [mode, setMode] = useState("login");
   const [registerForm, setRegisterForm] = useState(initialRegister);
   const [loginForm, setLoginForm] = useState(initialLogin);
   const [status, setStatus] = useState("");
-  const [me, setMe] = useState(null);
+  const [tone, setTone] = useState("neutral");
+  const [me, setMe] = useState(currentUser);
   const [loading, setLoading] = useState(false);
 
   async function handleRegister(event) {
     event.preventDefault();
     setLoading(true);
     setStatus("");
+    setTone("neutral");
     try {
       await registerUser(registerForm);
+      setTone("success");
       setStatus("Registration complete. You can now sign in.");
       setMode("login");
       setRegisterForm(initialRegister);
     } catch (error) {
+      setTone("warning");
       setStatus(error.message);
     } finally {
       setLoading(false);
@@ -44,13 +50,17 @@ export default function AuthPage() {
     event.preventDefault();
     setLoading(true);
     setStatus("");
+    setTone("neutral");
     try {
       await loginUser(loginForm);
       const currentUser = await fetchMe();
       setMe(currentUser);
+      await refreshCurrentUser();
+      setTone("success");
       setStatus("Login complete. Cookie-based auth is active.");
       setLoginForm(initialLogin);
     } catch (error) {
+      setTone("warning");
       setStatus(error.message);
     } finally {
       setLoading(false);
@@ -58,30 +68,36 @@ export default function AuthPage() {
   }
 
   return (
-    <section className="stack-large">
-      <div className="page-header">
-        <span className="eyebrow">Route /auth</span>
-        <h1>Login / registration</h1>
-        <p>One combined screen for the core auth flow required by the assignment.</p>
+    <section className="page-stack">
+      <div className="section-card__header">
+        <h1>Вхід та реєстрація</h1>
       </div>
 
-      <div className="auth-toggle">
-        <button type="button" className={mode === "login" ? "button button--primary" : "button"} onClick={() => setMode("login")}>
-          Login
+      <div className="auth-mode-switch">
+        <button
+          type="button"
+          className={mode === "login" ? "switch-button switch-button--active" : "switch-button"}
+          onClick={() => setMode("login")}
+        >
+          Вхід
         </button>
-        <button type="button" className={mode === "register" ? "button button--primary" : "button"} onClick={() => setMode("register")}>
-          Register
+        <button
+          type="button"
+          className={mode === "register" ? "switch-button switch-button--active" : "switch-button"}
+          onClick={() => setMode("register")}
+        >
+          Реєстрація
         </button>
       </div>
 
-      <div className="two-column">
-        <form className="panel form-grid" onSubmit={mode === "login" ? handleLogin : handleRegister}>
-          <h2>{mode === "login" ? "Login form" : "Registration form"}</h2>
+      <div className="auth-layout">
+        <form className="section-card form-grid" onSubmit={mode === "login" ? handleLogin : handleRegister}>
+          <h2>{mode === "login" ? "Логін" : "Реєстрація"}</h2>
 
           {mode === "register" ? (
             <>
               <label>
-                Name
+                Ім'я
                 <input value={registerForm.name} onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })} required />
               </label>
               <label>
@@ -89,56 +105,69 @@ export default function AuthPage() {
                 <input type="email" value={registerForm.email} onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })} required />
               </label>
               <label>
-                Login
+                Логін
                 <input value={registerForm.login} onChange={(event) => setRegisterForm({ ...registerForm, login: event.target.value })} required />
               </label>
               <label>
-                Phone
+                Телефон
                 <input value={registerForm.phone_number} onChange={(event) => setRegisterForm({ ...registerForm, phone_number: event.target.value })} />
               </label>
               <label>
-                Password
+                Пароль
                 <input type="password" value={registerForm.password} onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })} required />
               </label>
             </>
           ) : (
             <>
               <label>
-                Login
+                Логін
                 <input value={loginForm.login} onChange={(event) => setLoginForm({ ...loginForm, login: event.target.value })} required />
               </label>
               <label>
-                Password
+                Пароль
                 <input type="password" value={loginForm.password} onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })} required />
               </label>
             </>
           )}
 
           <button className="button button--primary" type="submit" disabled={loading}>
-            {loading ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}
+            {loading ? "Зачекайте..." : mode === "login" ? "Увійти" : "Зареєструватися"}
           </button>
-          <StatusBox tone={status.includes("complete") ? "success" : "warning"} message={status} />
+          <StatusBox tone={tone} message={status ? `! ${status}` : ""} />
         </form>
 
-        <aside className="panel">
-          <h2>Current session</h2>
+        <aside className="section-card auth-sidecard">
+          <div className="section-pill">Ваш профіль</div>
+          <h2>Поточний користувач</h2>
           {me ? (
             <dl className="data-list">
               <div>
-                <dt>Name</dt>
+                <dt>Ім'я</dt>
                 <dd>{me.name}</dd>
               </div>
               <div>
-                <dt>Login</dt>
+                <dt>Логін</dt>
                 <dd>{me.login}</dd>
               </div>
               <div>
-                <dt>Role</dt>
+                <dt>Роль</dt>
                 <dd>{me.role}</dd>
+              </div>
+              <div>
+                <dt>Email</dt>
+                <dd>{me.email}</dd>
+              </div>
+              <div>
+                <dt>Телефон</dt>
+                <dd>{me.phone_number || "Не вказано"}</dd>
+              </div>
+              <div>
+                <dt>Адреса</dt>
+                <dd>{me.address || "Не вказано"}</dd>
               </div>
             </dl>
           ) : (
-            <p>No authenticated user loaded yet.</p>
+            <p>Після входу тут з'являться ваші дані з бекенду.</p>
           )}
         </aside>
       </div>

@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
+import { fetchOrders, updateOrderStatus } from "../api/orders";
 import { createProduct, deleteProduct, fetchProducts, updateProduct } from "../api/products";
+import { fetchReservations, updateReservationStatus } from "../api/reservations";
+import { deleteUser, fetchUsers, updateUserRole } from "../api/users";
 import StatusBox from "../components/StatusBox";
+
+const adminTabs = [
+  { id: "products", label: "Товари" },
+  { id: "users", label: "Користувачі" },
+  { id: "orders", label: "Замовлення" },
+  { id: "reservations", label: "Бронювання" },
+];
+
+const roleOptions = ["user", "staff", "admin"];
+const statusOptions = ["pending", "confirmed", "completed", "cancelled"];
 
 const initialProduct = {
   name: "",
@@ -15,16 +29,46 @@ const initialProduct = {
 };
 
 export default function AdminPage() {
+  const { currentUser } = useOutletContext();
+  const [activeTab, setActiveTab] = useState("products");
   const [products, setProducts] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [form, setForm] = useState(initialProduct);
   const [editingId, setEditingId] = useState(null);
   const [status, setStatus] = useState("");
   const [tone, setTone] = useState("neutral");
 
+  const canOpenAdmin = currentUser && ["admin", "staff"].includes(currentUser.role);
+
   async function loadProducts() {
+    const result = await fetchProducts();
+    setProducts(result);
+  }
+
+  async function loadUsers() {
+    if (currentUser?.role !== "admin") {
+      setUsers([]);
+      return;
+    }
+    const result = await fetchUsers();
+    setUsers(result);
+  }
+
+  async function loadOrders() {
+    const result = await fetchOrders();
+    setOrders(result);
+  }
+
+  async function loadReservations() {
+    const result = await fetchReservations();
+    setReservations(result);
+  }
+
+  async function loadAdminData() {
     try {
-      const result = await fetchProducts();
-      setProducts(result);
+      await Promise.all([loadProducts(), loadUsers(), loadOrders(), loadReservations()]);
     } catch (error) {
       setTone("warning");
       setStatus(error.message);
@@ -32,8 +76,10 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    loadProducts();
-  }, []);
+    if (canOpenAdmin) {
+      loadAdminData();
+    }
+  }, [canOpenAdmin, currentUser?.role]);
 
   function startEdit(product) {
     setEditingId(product.id);
@@ -75,7 +121,7 @@ export default function AdminPage() {
     }
   }
 
-  async function handleDelete(productId) {
+  async function handleDeleteProduct(productId) {
     try {
       await deleteProduct(productId);
       setTone("success");
@@ -87,88 +133,249 @@ export default function AdminPage() {
     }
   }
 
+  async function handleRoleChange(login, role) {
+    try {
+      await updateUserRole(login, role);
+      setTone("success");
+      setStatus(`Role for ${login} updated.`);
+      await loadUsers();
+    } catch (error) {
+      setTone("warning");
+      setStatus(error.message);
+    }
+  }
+
+  async function handleDeleteUser(userId) {
+    try {
+      await deleteUser(userId);
+      setTone("success");
+      setStatus(`User #${userId} deleted.`);
+      await loadUsers();
+    } catch (error) {
+      setTone("warning");
+      setStatus(error.message);
+    }
+  }
+
+  async function handleOrderStatus(orderId, statusValue) {
+    try {
+      await updateOrderStatus(orderId, statusValue);
+      setTone("success");
+      setStatus(`Order #${orderId} updated.`);
+      await loadOrders();
+    } catch (error) {
+      setTone("warning");
+      setStatus(error.message);
+    }
+  }
+
+  async function handleReservationStatus(reservationId, statusValue) {
+    try {
+      await updateReservationStatus(reservationId, statusValue);
+      setTone("success");
+      setStatus(`Reservation #${reservationId} updated.`);
+      await loadReservations();
+    } catch (error) {
+      setTone("warning");
+      setStatus(error.message);
+    }
+  }
+
+  if (!canOpenAdmin) {
+    return (
+      <section className="page-stack">
+        <div className="section-card">
+          <span className="eyebrow">Обмежений доступ</span>
+          <h1>Ця сторінка доступна працівникам та адміністраторам</h1>
+          <p>Після входу з відповідною роллю тут з'явиться повна панель керування.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="stack-large">
-      <div className="page-header">
-        <span className="eyebrow">Route /admin</span>
-        <h1>Admin product panel</h1>
-        <p>Demonstration staff/admin page for product create, edit, and delete operations.</p>
+    <section className="page-stack">
+      <div className="section-card__header">
+        <span className="eyebrow">Панель керування</span>
+        <h1>Користувачі, товари, замовлення і бронювання</h1>
+      </div>
+
+      <div className="auth-mode-switch">
+        {adminTabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            className={activeTab === tab.id ? "switch-button switch-button--active" : "switch-button"}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <StatusBox tone={tone} message={status} />
 
-      <div className="two-column two-column--wide">
-        <form className="panel form-grid" onSubmit={handleSubmit}>
-          <h2>{editingId ? `Edit product #${editingId}` : "Create product"}</h2>
-          <label>
-            Name
-            <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
-          </label>
-          <label>
-            Native name
-            <input value={form.native_name} onChange={(event) => setForm({ ...form, native_name: event.target.value })} />
-          </label>
-          <label>
-            Image filename
-            <input value={form.image_filename} onChange={(event) => setForm({ ...form, image_filename: event.target.value })} />
-          </label>
-          <label>
-            Kind
-            <input value={form.kind} onChange={(event) => setForm({ ...form, kind: event.target.value })} required />
-          </label>
-          <label>
-            Categories
-            <input value={form.categories} onChange={(event) => setForm({ ...form, categories: event.target.value })} required />
-          </label>
-          <label>
-            Description
-            <textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} rows="4" />
-          </label>
-          <label>
-            Price UAH
-            <input type="number" min="0" value={form.price_uah} onChange={(event) => setForm({ ...form, price_uah: event.target.value })} required />
-          </label>
-          <label>
-            Stock quantity
-            <input type="number" min="0" value={form.stock_quantity} onChange={(event) => setForm({ ...form, stock_quantity: event.target.value })} required />
-          </label>
-          <div className="button-row">
-            <button className="button button--primary" type="submit">
-              {editingId ? "Save changes" : "Create product"}
-            </button>
-            <button
-              className="button"
-              type="button"
-              onClick={() => {
-                setEditingId(null);
-                setForm(initialProduct);
-              }}
-            >
-              Clear
-            </button>
-          </div>
-        </form>
+      {activeTab === "products" ? (
+        <div className="admin-grid">
+          <form className="section-card form-grid" onSubmit={handleSubmit}>
+            <h2>{editingId ? `Редагування товару #${editingId}` : "Додавання товару"}</h2>
+            <label>
+              Назва
+              <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
+            </label>
+            <label>
+              Назва оригіналом
+              <input value={form.native_name} onChange={(event) => setForm({ ...form, native_name: event.target.value })} />
+            </label>
+            <label>
+              Назва файлу картинки
+              <input value={form.image_filename} onChange={(event) => setForm({ ...form, image_filename: event.target.value })} />
+            </label>
+            <label>
+              Тип
+              <input value={form.kind} onChange={(event) => setForm({ ...form, kind: event.target.value })} required />
+            </label>
+            <label>
+              Категорії
+              <input value={form.categories} onChange={(event) => setForm({ ...form, categories: event.target.value })} required />
+            </label>
+            <label>
+              Опис
+              <textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} rows="4" />
+            </label>
+            <label>
+              Ціна
+              <input type="number" min="0" value={form.price_uah} onChange={(event) => setForm({ ...form, price_uah: event.target.value })} required />
+            </label>
+            <label>
+              Кількість
+              <input type="number" min="0" value={form.stock_quantity} onChange={(event) => setForm({ ...form, stock_quantity: event.target.value })} required />
+            </label>
+            <div className="button-row">
+              <button className="button button--primary" type="submit">
+                {editingId ? "Зберегти зміни" : "Створити товар"}
+              </button>
+              <button
+                className="button"
+                type="button"
+                onClick={() => {
+                  setEditingId(null);
+                  setForm(initialProduct);
+                }}
+              >
+                Очистити
+              </button>
+            </div>
+          </form>
 
-        <div className="panel stack-medium">
-          <h2>Current product list</h2>
-          {products.map((product) => (
-            <article key={product.id} className="admin-product-row">
+          <div className="section-card stack-medium">
+            <h2>Поточні товари</h2>
+            {products.map((product) => (
+              <article key={product.id} className="admin-row-card">
+                <div>
+                  <strong>{product.name}</strong>
+                  <p>{product.kind} · {product.price_uah} грн · {product.stock_quantity} шт.</p>
+                </div>
+                <div className="button-row">
+                  <button className="button" type="button" onClick={() => startEdit(product)}>
+                    Редагувати
+                  </button>
+                  <button className="button button--danger" type="button" onClick={() => handleDeleteProduct(product.id)}>
+                    Видалити
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "users" ? (
+        <div className="section-card stack-medium">
+          <h2>Зареєстровані користувачі</h2>
+          {currentUser.role !== "admin" ? <p>Редагування користувачів доступне тільки адміну.</p> : null}
+          {users.map((user) => (
+            <article key={user.id} className="admin-row-card">
               <div>
-                <strong>{product.name}</strong>
-                <p>{product.kind} · {product.price_uah} UAH</p>
+                <strong>{user.name}</strong>
+                <p>{user.login} · {user.email}</p>
               </div>
-              <div className="button-row">
-                <button className="button" type="button" onClick={() => startEdit(product)}>
-                  Edit
-                </button>
-                <button className="button button--danger" type="button" onClick={() => handleDelete(product.id)}>
-                  Delete
+              <div className="inline-controls">
+                <select
+                  value={user.role}
+                  onChange={(event) => handleRoleChange(user.login, event.target.value)}
+                  disabled={currentUser.role !== "admin"}
+                >
+                  {roleOptions.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="button button--danger"
+                  type="button"
+                  onClick={() => handleDeleteUser(user.id)}
+                  disabled={currentUser.role !== "admin"}
+                >
+                  Видалити
                 </button>
               </div>
             </article>
           ))}
         </div>
-      </div>
+      ) : null}
+
+      {activeTab === "orders" ? (
+        <div className="section-card stack-medium">
+          <h2>Замовлення</h2>
+          {orders.map((order) => (
+            <article key={order.id} className="admin-row-card admin-row-card--stacked">
+              <div>
+                <strong>Замовлення #{order.id}</strong>
+                <p>{order.what_ordered}</p>
+                <p>{order.address || "Без адреси"} · {order.total_price} грн</p>
+              </div>
+              <div className="inline-controls">
+                <select value={order.status} onChange={(event) => handleOrderStatus(order.id, event.target.value)}>
+                  {statusOptions.map((statusOption) => (
+                    <option key={statusOption} value={statusOption}>
+                      {statusOption}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      {activeTab === "reservations" ? (
+        <div className="section-card stack-medium">
+          <h2>Бронювання</h2>
+          {reservations.map((reservation) => (
+            <article key={reservation.id} className="admin-row-card admin-row-card--stacked">
+              <div>
+                <strong>Бронювання #{reservation.id}</strong>
+                <p>{reservation.reservation_at}</p>
+                <p>Місця: {reservation.places.join(", ")}</p>
+              </div>
+              <div className="inline-controls">
+                <select
+                  value={reservation.status}
+                  onChange={(event) => handleReservationStatus(reservation.id, event.target.value)}
+                >
+                  {statusOptions.map((statusOption) => (
+                    <option key={statusOption} value={statusOption}>
+                      {statusOption}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }

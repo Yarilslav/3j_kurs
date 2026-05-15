@@ -6,6 +6,7 @@ import AuthPage from "../pages/AuthPage";
 import BookingPage from "../pages/BookingPage";
 import CatalogPage from "../pages/CatalogPage";
 import HomePage from "../pages/HomePage";
+import OrderPage from "../pages/OrderPage";
 import ProductPage from "../pages/ProductPage";
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/catalog/:productId" element={<ProductPage />} />
+        <Route path="/order" element={<OrderPage />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/admin" element={<AdminPage />} />
       </Route>

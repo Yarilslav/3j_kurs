@@ -39,57 +39,15 @@ docker compose up --build
 - Prometheus: http://127.0.0.1:9090
 - Grafana: http://127.0.0.1:3000
 
+Для цього проекту локальний `docker compose` є основним і рекомендованим способом запуску.
+
+Для спрощення локального стенду контейнер `db` налаштований з `POSTGRES_HOST_AUTH_METHOD=trust`, тому підключення між контейнерами в docker-мережі не вимагають окремої перевірки пароля. Це зручно для навчального проекту локально, але не підходить для production.
+
 ## Тести
 
 ```bash
 docker compose --profile test up --build --abort-on-container-exit tests
 ```
-
-## Підготовка до AWS
-
-Рекомендований навчальний шлях деплойменту:
-
-- Backend: Docker image у Amazon ECR, запуск через ECS Fargate, Elastic Beanstalk Docker або App Runner.
-- Database: Amazon RDS PostgreSQL.
-- Frontend: окремо через S3 + CloudFront або AWS Amplify.
-- Секрети: AWS Secrets Manager, Parameter Store або environment variables сервісу деплойменту.
-- Health check для load balancer: `/healthz`.
-- Readiness check з перевіркою БД: `/readyz`.
-
-Мінімальні production-змінні:
-
-```env
-ENVIRONMENT=production
-APP_HOST=0.0.0.0
-APP_PORT=8000
-APP_RELOAD=false
-DATABASE_URL=postgresql+psycopg_async://USER:PASSWORD@RDS_HOST:5432/DB_NAME
-POSTGRES_DB=DB_NAME
-POSTGRES_USER=USER
-POSTGRES_PASSWORD=PASSWORD
-SECRET_KEY=generate-a-random-32-plus-character-secret
-FRONTEND_CORS_ORIGINS=https://your-frontend-domain.example
-ADMIN_BOOTSTRAP_ENABLED=false
-RUN_MIGRATIONS=false
-```
-
-Для першого деплойменту можна виконати міграції окремою ECS task або тимчасово встановити:
-
-```env
-RUN_MIGRATIONS=true
-```
-
-Не залишайте `RUN_MIGRATIONS=true` як постійну поведінку для кількох одночасних інстансів.
-
-## Production smoke test локально
-
-Скопіюйте `.env.example` у `.env`, змініть `SECRET_KEY`, `POSTGRES_PASSWORD`, `ADMIN_PASSWORD`, після чого:
-
-```bash
-docker compose -f docker-compose.prod.yml up --build
-```
-
-Якщо `ENVIRONMENT=production`, застосунок не стартує з дефолтним `SECRET_KEY` або дефолтним `ADMIN_PASSWORD`.
 
 ## Основні API endpoint-и
 
@@ -126,22 +84,6 @@ cd frontend
 npm ci
 npm run build
 ```
-
-## Render
-
-Для фронтенду в репозиторії є готовий [render.yaml](C:/Users/acer3/PycharmProjects/praktychni_3j_kurs/render.yaml) під `Static Site`.
-
-У ньому вже виставлено:
-
-```env
-VITE_API_URL=https://threej-kurs.onrender.com
-```
-
-і додано rewrite `/* -> /index.html`, щоб React Router коректно працював на прямих переходах на `/catalog`, `/booking`, `/admin` та інші маршрути.
-
-Для backend на Render тепер підтримується звичайний `DATABASE_URL=postgresql://...` або `postgresql+psycopg://...`: конфіг автоматично нормалізує його для async SQLAlchemy.
-
-Monitoring-контейнери у Render можна піднімати окремо пізніше, але для поточного деплойменту вони не потрібні, тому `render.yaml` спрощено саме під фронтенд.
 
 ## Додаткові матеріали
 

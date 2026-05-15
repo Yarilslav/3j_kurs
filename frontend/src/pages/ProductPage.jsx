@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useOutletContext, useParams } from "react-router-dom";
 
 import { createOrder } from "../api/orders";
 import { fetchProduct } from "../api/products";
 import StatusBox from "../components/StatusBox";
+import { addItemToDraft, loadOrderDraft, saveOrderDraft } from "../utils/orderDraft";
+import { getProductImage } from "../utils/productAssets";
 
 const initialOrder = {
   quantity: 1,
@@ -13,6 +15,7 @@ const initialOrder = {
 };
 
 export default function ProductPage() {
+  const { currentUser } = useOutletContext();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [orderForm, setOrderForm] = useState(initialOrder);
@@ -52,54 +55,80 @@ export default function ProductPage() {
     }
   }
 
+  function handleAddToDraft() {
+    const accountKey = currentUser?.login || "guest";
+    const nextDraft = addItemToDraft(loadOrderDraft(accountKey), Number(productId));
+    saveOrderDraft(accountKey, nextDraft);
+    setTone("success");
+    setStatus("Товар додано до списку формування замовлення.");
+  }
+
   return (
-    <section className="stack-large">
-      <div className="page-header">
-        <span className="eyebrow">Route /catalog/:id</span>
-        <h1>Product details + order flow</h1>
+    <section className="page-stack">
+      <div className="section-card__header">
+        <span className="eyebrow">Сторінка продукту</span>
+        <h1>Окрема позиція і швидке створення замовлення</h1>
       </div>
 
       {!product ? (
-        <div className="panel">
-          <p>Loading product...</p>
+        <div className="section-card">
+          <p>Завантаження продукту...</p>
         </div>
       ) : (
-        <div className="two-column two-column--wide">
-          <article className="panel stack-medium">
-            <div>
-              <span className="eyebrow">Tea #{product.id}</span>
-              <h2>{product.name}</h2>
-              <p>{product.native_name || "No native title"}</p>
+        <div className="product-layout">
+          <article className="section-card stack-medium">
+            <div className="product-hero">
+              <div className="product-hero__media">
+                {getProductImage(product) ? (
+                  <img src={getProductImage(product)} alt={product.name} />
+                ) : (
+                  <span>Картинка</span>
+                )}
+              </div>
+              <div>
+                <h2>{product.name}</h2>
+                <p>{product.native_name || "No native title"}</p>
+                <div className="button-row">
+                  <button className="button button--soft-accent" type="button" onClick={handleAddToDraft}>
+                    Додати в замовлення
+                  </button>
+                  <Link className="button button--ghost" to="/order">
+                    Перейти до замовлення
+                  </Link>
+                </div>
+              </div>
             </div>
-            <p>{product.description || "No description yet."}</p>
+            <div>
+              <p>{product.description || "No description yet."}</p>
+            </div>
             <dl className="data-list">
               <div>
-                <dt>Kind</dt>
+                <dt>Тип</dt>
                 <dd>{product.kind}</dd>
               </div>
               <div>
-                <dt>Categories</dt>
+                <dt>Категорії</dt>
                 <dd>{product.categories.join(", ")}</dd>
               </div>
               <div>
-                <dt>Price</dt>
-                <dd>{product.price_uah} UAH</dd>
+                <dt>Ціна</dt>
+                <dd>{product.price_uah} грн</dd>
               </div>
               <div>
-                <dt>Stock</dt>
+                <dt>Залишок</dt>
                 <dd>{product.stock_quantity}</dd>
               </div>
               <div>
-                <dt>Image file</dt>
-                <dd>{product.image_filename || "Not assigned"}</dd>
+                <dt>Файл зображення</dt>
+                <dd>{product.image_filename || "Не вказано"}</dd>
               </div>
             </dl>
           </article>
 
-          <form className="panel form-grid" onSubmit={handleSubmit}>
-            <h2>Create order</h2>
+          <form className="section-card form-grid" onSubmit={handleSubmit}>
+            <h2>Оформлення замовлення</h2>
             <label>
-              Quantity
+              Кількість
               <input
                 type="number"
                 min="1"
@@ -109,7 +138,7 @@ export default function ProductPage() {
               />
             </label>
             <label>
-              Delivery address
+              Адреса доставки
               <input
                 value={orderForm.address}
                 onChange={(event) => setOrderForm({ ...orderForm, address: event.target.value })}
@@ -117,21 +146,21 @@ export default function ProductPage() {
               />
             </label>
             <label>
-              Guest name
+              Ім'я гостя
               <input
                 value={orderForm.guest_name}
                 onChange={(event) => setOrderForm({ ...orderForm, guest_name: event.target.value })}
               />
             </label>
             <label>
-              Guest contact
+              Контакт
               <input
                 value={orderForm.guest_contact}
                 onChange={(event) => setOrderForm({ ...orderForm, guest_contact: event.target.value })}
               />
             </label>
             <button className="button button--primary" type="submit">
-              Submit order
+              Створити замовлення
             </button>
             <StatusBox tone={tone} message={status} />
           </form>

@@ -34,29 +34,25 @@ export default function BookingPage() {
   }
 
   return (
-    <section className="stack-large">
-      <div className="page-header">
-        <span className="eyebrow">Route /booking</span>
-        <h1>Seat booking flow</h1>
-        <p>Low-fi page for choosing date/time, seats, and guest contact details.</p>
+    <section className="page-stack">
+      <div className="section-card__header">
+        <h1>Оберіть час, місця і контактні дані</h1>
       </div>
 
-      <div className="two-column">
-        <div className="panel">
-          <h2>Seat map placeholder</h2>
-          <div className="seat-grid">
+      <div className="booking-layout">
+        <div className="section-card">
+          <h2>Схема залу</h2>
+          <div className="seat-grid seat-grid--booking">
             {Array.from({ length: 15 }, (_, index) => (
-              <div key={index + 1} className="seat-box">
-                {index + 1}
-              </div>
+              <div key={index + 1} className="seat-box seat-box--soft">{index + 1}</div>
             ))}
           </div>
         </div>
 
-        <form className="panel form-grid" onSubmit={handleSubmit}>
-          <h2>Reservation form</h2>
+        <form className="section-card form-grid" onSubmit={handleSubmit}>
+          <h2>Форма бронювання</h2>
           <label>
-            Date and time
+            Дата і час
             <input
               placeholder="2026-06-05 18:00"
               value={bookingForm.reservation_at}
@@ -65,7 +61,7 @@ export default function BookingPage() {
             />
           </label>
           <label>
-            Places
+            Місця
             <input
               placeholder="1,2,3"
               value={bookingForm.places}
@@ -74,21 +70,21 @@ export default function BookingPage() {
             />
           </label>
           <label>
-            Guest name
+            Ім'я гостя
             <input
               value={bookingForm.guest_name}
               onChange={(event) => setBookingForm({ ...bookingForm, guest_name: event.target.value })}
             />
           </label>
           <label>
-            Guest contact
+            Контакт
             <input
               value={bookingForm.guest_contact}
               onChange={(event) => setBookingForm({ ...bookingForm, guest_contact: event.target.value })}
             />
           </label>
           <button className="button button--primary" type="submit">
-            Send reservation
+            Надіслати бронювання
           </button>
           <StatusBox tone={tone} message={status} />
         </form>

@@ -4,39 +4,46 @@ import { homeScenarios } from "../mock/homeScenarios";
 
 export default function HomePage() {
   return (
-    <section className="stack-large">
-      <div className="hero-grid">
-        <div className="panel panel--hero">
-          <span className="eyebrow">Low-fi demo interface</span>
-          <h1>Tea House Asahi</h1>
+    <section className="page-stack">
+      <div className="landing-hero">
+        <div className="landing-hero__copy">
+          <span className="eyebrow">Чайна атмосфера, жива навігація, новий вигляд</span>
+          <h1>Asahi</h1>
           <p>
-            Minimal React showcase for the tea catalog, guest booking flow, and basic staff product
-            management.
+            Новий інтерфейс для каталогу, замовлень, бронювання і внутрішньої роботи персоналу.
           </p>
-          <div className="button-row">
+          <div className="hero-actions">
             <Link className="button button--primary" to="/catalog">
-              Open catalog
+              Перейти до каталогу
             </Link>
             <Link className="button" to="/booking">
-              Book seats
+              Забронювати місця
             </Link>
           </div>
         </div>
-        <div className="panel">
-          <h2>Project intent</h2>
-          <ul className="plain-list">
-            <li>Show the main customer journeys.</li>
-            <li>Connect React pages to the real FastAPI backend.</li>
-            <li>Keep the interface intentionally low-fi and easy to explain.</li>
-          </ul>
+
+        <div className="landing-hero__cards">
+          <article className="feature-card">
+            <span className="eyebrow">Каталог</span>
+            <h2>Живі позиції з бази</h2>
+            <p>Назви, категорії, ціни, наявність і короткий шлях до створення замовлення.</p>
+          </article>
+          <article className="feature-card">
+            <span className="eyebrow">Бронювання</span>
+            <h2>Той самий сценарій, але в новій обгортці</h2>
+            <p>Форма бронювання і карта місць зібрані в спокійний, єдиний стиль.</p>
+          </article>
         </div>
       </div>
 
-      <div className="panel">
-        <h2>Scenario map</h2>
+      <div className="section-card">
+        <div className="section-card__header">
+          <span className="eyebrow">Сценарії</span>
+          <h2>Що вже можна пройти у проєкті</h2>
+        </div>
         <div className="scenario-grid">
           {homeScenarios.map((scenario) => (
-            <article key={scenario.title} className="scenario-card">
+            <article key={scenario.title} className="scenario-card scenario-card--soft">
               <h3>{scenario.title}</h3>
               <ol>
                 {scenario.steps.map((step) => (

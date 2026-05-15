@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     PORT: int | None = None
     APP_RELOAD: bool = False
+    RUN_MIGRATIONS: bool = False
     DATABASE_URL: str
     POSTGRES_DB: str | None = None
     POSTGRES_USER: str | None = None
